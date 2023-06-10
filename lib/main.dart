@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 
@@ -12,7 +11,7 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       home: Scaffold(
         body: HomeScreen(),
       ),
@@ -21,63 +20,66 @@ class App extends StatelessWidget {
 }
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+  HomeScreen({super.key});
 
-  // final Future<List<MovieModel>> movies = ApiService.getPopularMovies();
+  final Future<List<MovieModel>> popularMovies = ApiService.getPopularMovies();
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       backgroundColor: Colors.white,
       body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20),
+        padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
           children: [
-            SizedBox(
+            const SizedBox(
               height: 90,
             ),
-            Text(
-              'Popular Movies',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w900,
-              ),
+            const Row(
+              children: [
+                Text(
+                  'Popular Movies',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ],
             ),
+            const SizedBox(
+              height: 20,
+            ),
+            FutureBuilder(
+              future: popularMovies,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return SizedBox(
+                    height: 200,
+                    child: makePopularList(snapshot),
+                  );
+                }
+                return const SizedBox(
+                  height: 200,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      CircularProgressIndicator(),
+                    ],
+                  ),
+                );
+              },
+            )
           ],
         ),
       ),
-      // body: FutureBuilder(
-      //   future: movies,
-      //   builder: (context, snapshot) {
-      //     if (snapshot.hasData) {
-      //       return Column(
-      //         children: [
-      //           const SizedBox(
-      //             height: 50,
-      //           ),
-      //           Expanded(
-      //             child: makeList(snapshot),
-      //           ),
-      //         ],
-      //       );
-      //     }
-      //     return const Center(
-      //       child: CircularProgressIndicator(),
-      //     );
-      //   },
-      // ),
     );
   }
 }
 
-ListView makeList(AsyncSnapshot<List<MovieModel>> snapshot) {
+ListView makePopularList(AsyncSnapshot<List<MovieModel>> snapshot) {
   return ListView.separated(
     scrollDirection: Axis.horizontal,
     itemCount: snapshot.data!.length,
-    padding: const EdgeInsets.symmetric(
-      vertical: 10,
-      horizontal: 20,
-    ),
     itemBuilder: (context, index) {
       var movie = snapshot.data![index];
       return PopularMovie(
@@ -85,7 +87,7 @@ ListView makeList(AsyncSnapshot<List<MovieModel>> snapshot) {
       );
     },
     separatorBuilder: (context, index) => const SizedBox(
-      width: 40,
+      width: 20,
     ),
   );
 }
@@ -102,7 +104,7 @@ class PopularMovie extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 250,
+      width: 300,
       clipBehavior: Clip.hardEdge,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
@@ -114,7 +116,10 @@ class PopularMovie extends StatelessWidget {
           ),
         ],
       ),
-      child: Image.network('$baseUrl$posterPath'),
+      child: Image.network(
+        '$baseUrl$posterPath',
+        fit: BoxFit.cover,
+      ),
     );
   }
 }

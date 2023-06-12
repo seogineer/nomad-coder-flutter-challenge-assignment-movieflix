@@ -360,24 +360,27 @@ class _DetailScreenState extends State<DetailScreen> {
   }
 
   List<Widget> displayStar(double voteAverage) {
-    List<Widget> stars = [];
-    int filledStar = (voteAverage / 2.0).round();
-    int notFilledStar = 5 - filledStar;
-    for (int i = 0; i < filledStar; i++) {
-      stars.add(const Icon(
+    List<Widget> stars = getNotfilledStars();
+    int countOfStars = (voteAverage / 2.0).round();
+    for (int i = 0; i < countOfStars; i++) {
+      stars[i] = const Icon(
         Icons.star_rounded,
         size: 25,
         color: Colors.amber,
-      ));
+      );
     }
-    for (int i = 0; i < notFilledStar; i++) {
-      stars.add(const Icon(
+    return stars;
+  }
+
+  List<Widget> getNotfilledStars() {
+    return List.filled(
+      5,
+      const Icon(
         Icons.star_rounded,
         size: 25,
         color: Colors.white54,
-      ));
-    }
-    return stars;
+      ),
+    );
   }
 }
 
